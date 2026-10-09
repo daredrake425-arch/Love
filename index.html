@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Message For You</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #05060a;
+    color: #fff;
+    padding: 20px;
+  }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108, 92, 231, 0.28), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgba(232, 67, 147, 0.22), transparent 60%),
+      linear-gradient(180deg, #05060a 0%, #0a0b14 100%);
+  }
+
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .orb-1 { width: 400px; height: 400px; background: #6c5ce7; top: -100px; left: -100px; }
+  .orb-2 { width: 380px; height: 380px; background: #e84393; bottom: -120px; right: -100px; }
+
+  .card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 500px;
+    padding: 50px 35px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(28, 30, 48, 0.9) 0%, rgba(18, 19, 30, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    text-align: center;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+  }
+
+  .card.hidden { display: none; }
+
+  .label {
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+
+  .accent {
+    background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p.subtitle {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+
+  #nameInput {
+    padding: 16px 22px;
+    font-size: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    width: 100%;
+    outline: none;
+    text-align: center;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+  }
+  #nameInput::placeholder { color: rgba(255, 255, 255, 0.35); }
+  #nameInput:focus {
+    border-color: rgba(139, 126, 255, 0.6);
+    box-shadow: 0 0 0 4px rgba(139, 126, 255, 0.15);
+  }
+
+  .buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 16px 40px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .yes-btn {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #fd79a8 100%);
+    color: white;
+    box-shadow: 0 10px 30px -6px rgba(108, 92, 231, 0.7);
+  }
+  .yes-btn:hover, .yes-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px -6px rgba(108, 92, 231, 0.9);
+  }
+
+  .no-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .no-btn:hover, .no-btn:active {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+  }
+
+  #typeText {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 17px;
+    font-weight: 500;
+    min-height: 70px;
+    margin: 20px 0;
+    line-height: 1.7;
+  }
+
+  .ig-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    border-radius: 22px;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ig-icon svg { width: 44px; height: 44px; fill: white; }
+
+  .copied-box {
+    background: rgba(139, 126, 255, 0.12);
+    border: 1px solid rgba(139, 126, 255, 0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+  }
+  .copied-box strong { color: #a29bfe; }
+
+  @media (max-width: 480px) {
+    .card { padding: 40px 24px; }
+    h1 { font-size: 22px; }
+    button { padding: 14px 30px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- SCREEN 1 -->
+<div class="card" id="screen1">
+  <span class="label">A Personal Note</span>
+  <h1>There's something<br>I want to tell you</h1>
+  <p class="subtitle">Enter your name to continue.</p>
+  <input type="text" id="nameInput" placeholder="Your name" maxlength="20">
+  <div class="buttons">
+    <button class="yes-btn" onclick="goToScreen2()">Continue</button>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="card hidden" id="screen2">
+  <span class="label">For You</span>
+  <h1>Hey <span class="accent" id="displayName"></span></h1>
+  <p id="typeText"></p>
+  <div class="buttons">
+    <button class="yes-btn" onclick="handleYes()">Yes</button>
+    <button class="no-btn" onclick="handleNo()">No</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: YES -->
+<div class="card hidden" id="screen3">
+  <div class="ig-icon">
+    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+  </div>
+  <span class="label">Opening Instagram</span>
+  <h1>Thank you, <span class="accent" id="displayName2"></span></h1>
+  <div class="copied-box">
+    <strong>Message copied.</strong><br>
+    Instagram is opening. Just paste and send.
+  </div>
+  <div class="buttons">
+    <button class="yes-btn" onclick="openInsta('YES')">Open Instagram</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: NO -->
+<div class="card hidden" id="screen4">
+  <div class="ig-icon" style="background: linear-gradient(135deg, #6b7280 0%, #374151 100%);">
+    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+  </div>
+  <span class="label">Opening Instagram</span>
+  <h1>Understood, <span class="accent" id="displayName3"></span></h1>
+  <div class="copied-box">
+    <strong>Message copied.</strong><br>
+    Instagram is opening. Just paste and send.
+  </div>
+  <div class="buttons">
+    <button class="yes-btn" style="background: linear-gradient(135deg, #6b7280 0%, #374151 100%);" onclick="openInsta('NO')">Open Instagram</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  //  CONFIG
+  // ============================================================
+  var MY_INSTA = "gecko.exe";
+  var MSG_YES = "She said YES!";
+  var MSG_NO = "She said No.";
+
+  // ============================================================
+  //  SCREEN SWITCHER
+  // ============================================================
+  function showScreen(id) {
+    var screens = document.querySelectorAll('.card');
+    for (var i = 0; i < screens.length; i++) {
+      screens[i].classList.add('hidden');
+    }
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  // ============================================================
+  //  STEP 1 -> STEP 2
+  // ============================================================
+  function goToScreen2() {
+    var nameInput = document.getElementById('nameInput');
+    var name = nameInput.value.trim();
+    if (!name) {
+      alert('Please enter your name first.');
+      return;
+    }
+    document.getElementById('displayName').textContent = name;
+    document.getElementById('displayName2').textContent = name;
+    document.getElementById('displayName3').textContent = name;
+    showScreen('screen2');
+    typeMessage('You are the best thing that ever happened to me. Will you be mine?');
+  }
+
+  // ============================================================
+  //  TYPEWRITER
+  // ============================================================
+  function typeMessage(text) {
+    var el = document.getElementById('typeText');
+    el.textContent = '';
+    var i = 0;
+    var timer = setInterval(function() {
+      if (i < text.length) {
+        el.textContent = text.substring(0, i + 1);
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 45);
+  }
+
+  // ============================================================
+  //  YES button
+  // ============================================================
+  function handleYes() {
+    showScreen('screen3');
+    // Open Instagram after 1 second
+    setTimeout(function() {
+      openInsta('YES');
+    }, 1000);
+  }
+
+  // ============================================================
+  //  NO button
+  // ============================================================
+  function handleNo() {
+    showScreen('screen4');
+    setTimeout(function() {
+      openInsta('NO');
+    }, 1000);
+  }
+
+  // ============================================================
+  //  INSTAGRAM OPEN
+  // ============================================================
+  function openInsta(type) {
+    var msg = (type === 'YES') ? MSG_YES : MSG_NO;
+
+    // Copy message to clipboard
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = msg;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch (e) {
+      console.log('Copy failed', e);
+    }
+
+    // Open Instagram DM
+    var url = 'https://ig.me/m/' + MY_INSTA;
+    window.open(url, '_blank');
+  }
+
+  // ============================================================
+  //  ENTER KEY on name input
+  // ============================================================
+  document.getElementById('nameInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') goToScreen2();
+  });
+</script>
+</body>
+</html>
