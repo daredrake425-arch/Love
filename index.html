@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 A Special Message For You 💖</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+  
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1, #ff6b9d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    overflow: hidden;
+    position: relative;
+    perspective: 1000px;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Floating hearts + petals */
+  .float-item {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    animation: floatUp linear infinite;
+    opacity: 0.7;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+
+  /* Main card */
+  .card {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 45px 35px;
+    border-radius: 30px;
+    box-shadow: 0 25px 70px rgba(255, 20, 147, 0.35),
+                0 0 0 1px rgba(255,255,255,0.5) inset;
+    text-align: center;
+    max-width: 520px;
+    width: 92%;
+    z-index: 10;
+    transition: transform 0.2s ease;
+    transform-style: preserve-3d;
+    position: relative;
+    backdrop-filter: blur(10px);
+  }
+
+  .big-heart {
+    font-size: 90px;
+    display: inline-block;
+    animation: heartbeat 1.3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(233,30,99,0.6));
+  }
+
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    25% { transform: scale(1.25); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.18); }
+  }
+
+  h1 {
+    color: #e91e63;
+    font-size: 30px;
+    margin: 18px 0 12px;
+    text-shadow: 0 2px 8px rgba(233,30,99,0.15);
+  }
+
+  .name {
+    font-weight: 800;
+    background: linear-gradient(135deg,#ff2d78,#a0186b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p {
+    color: #555;
+    font-size: 17px;
+    margin: 12px 0 25px;
+    line-height: 1.6;
+  }
+
+  #nameInput {
+    padding: 16px 22px;
+    font-size: 16px;
+    border: 2px solid #ffb6c1;
+    border-radius: 50px;
+    width: 100%;
+    outline: none;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    font-family: inherit;
+    background: #fff8fa;
+  }
+  #nameInput:focus {
+    border-color: #e91e63;
+    box-shadow: 0 0 0 4px rgba(233,30,99,0.15);
+    transform: scale(1.02);
+  }
+
+  .buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  button {
+    padding: 16px 38px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+    font-family: inherit;
+  }
+
+  .yes-btn {
+    background: linear-gradient(135deg, #ff6b9d, #e91e63);
+    color: white;
+    box-shadow: 0 10px 25px rgba(233,30,99,0.45);
+  }
+  .yes-btn:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 15px 35px rgba(233,30,99,0.65);
+  }
+
+  .no-btn {
+    background: #f0f0f0;
+    color: #999;
+    transition: all 0.3s ease;
+  }
+
+  /* Typewriter */
+  #typeText {
+    color: #e91e63;
+    font-size: 20px;
+    font-weight: 600;
+    min-height: 60px;
+    margin: 15px 0;
+    line-height: 1.5;
+  }
+  .cursor {
+    display: inline-block;
+    width: 3px;
+    height: 22px;
+    background: #e91e63;
+    animation: blink 0.8s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Success screen */
+  .success-emoji {
+    font-size: 110px;
+    animation: heartbeat 1.3s infinite;
+    filter: drop-shadow(0 0 25px rgba(233,30,99,0.7));
+  }
+
+  .final-msg {
+    font-size: 22px;
+    color: #e91e63;
+    font-weight: 700;
+    margin-top: 15px;
+    line-height: 1.8;
+  }
+
+  .big-love {
+    font-size: 55px;
+    margin-top: 20px;
+    letter-spacing: 8px;
+    animation: heartbeat 1.5s infinite;
+  }
+
+  .hidden { display: none !important; }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    top: -20px;
+    z-index: 999;
+    pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 35px 22px; }
+    h1 { font-size: 24px; }
+    .big-heart { font-size: 70px; }
+    button { padding: 14px 28px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- STEP 1: Name -->
+<div class="card" id="step1">
+  <div class="big-heart">💌</div>
+  <h1>Ek Special Message Hai...</h1>
+  <p>Pehle apna naam likho, phir dekho kya hota hai 😉</p>
+  <input type="text" id="nameInput" placeholder="Yahan apna naam likho..." maxlength="20">
+  <br>
+  <button class="yes-btn" onclick="startSurprise()">Aage Badho →</button>
+</div>
+
+<!-- STEP 2: Question -->
+<div class="card hidden" id="step2">
+  <div class="big-heart">❤️</div>
+  <h1>Hey <span class="name" id="displayName"></span>!</h1>
+  <p id="typeText"></p>
+  <div class="buttons">
+    <button class="yes-btn" onclick="sayYes()">Haan! 💖</button>
+    <button class="no-btn" id="noBtn" onmouseover="moveNo()" onclick="moveNo()">Nahi 😢</button>
+  </div>
+</div>
+
+<!-- STEP 3: Success -->
+<div class="card hidden" id="step3">
+  <div class="success-emoji">💕</div>
+  <h1>I Love You, <span class="name" id="displayName2"></span>! 💗</h1>
+  <div class="final-msg">
+    Tumne meri duniya roshan kar di 🌹<br>
+    Forever & Always ❤️
+  </div>
+  <div class="big-love">🥰💐💍</div>
+</div>
+
+<script>
+  // ===== Floating hearts & petals =====
+  const floatIcons = ['❤️','💕','💖','💗','🌸','🌹','💝','✨'];
+  function createFloating() {
+    const el = document.createElement('div');
+    el.className = 'float-item';
+    el.textContent = floatIcons[Math.floor(Math.random()*floatIcons.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.fontSize = (Math.random()*25 + 15) + 'px';
+    el.style.animationDuration = (Math.random()*5 + 6) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 11000);
+  }
+  setInterval(createFloating, 500);
+  for (let i=0;i<8;i++) setTimeout(createFloating, i*200);
+
+  // ===== Start =====
+  function startSurprise() {
+    const name = document.getElementById('nameInput').value.trim();
+    if (!name) { alert('Pehle apna naam likho! 😊'); return; }
+    document.getElementById('displayName').textContent = name;
+    document.getElementById('displayName2').textContent = name;
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    typeWriter(`Mujhe tumse kuch kehna hai... Kya tum meri ho? / Kya tum mera ho? 💕`);
+  }
+
+  // ===== Typewriter =====
+  function typeWriter(text) {
+    const el = document.getElementById('typeText');
+    el.innerHTML = '';
+    let i = 0;
+    const cursor = '<span class="cursor"></span>';
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        el.innerHTML = text.substring(0,i+1) + cursor;
+        i++;
+      } else {
+        clearInterval(timer);
+        el.innerHTML = text + cursor;
+      }
+    }, 55);
+  }
+
+  // ===== No button runs away =====
+  function moveNo() {
+    const btn = document.getElementById('noBtn');
+    const x = (Math.random() - 0.5) * 400;
+    const y = (Math.random() - 0.5) * 300;
+    btn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  // ===== YES! =====
+  function sayYes() {
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.remove('hidden');
+    confettiBurst();
+  }
+
+  // ===== Confetti =====
+  function confettiBurst() {
+    const colors = ['#ff2d78','#ff6b9d','#ffd1dc','#ffb6c1','#e91e63','#fff','#ffc0cb'];
+    for (let i=0;i<150;i++) {
+      setTimeout(() => {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random()*100 + 'vw';
+        c.style.background = colors[Math.floor(Math.random()*colors.length)];
+        c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        c.style.animationDuration = (Math.random()*2 + 2) + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 4000);
+      }, i*15);
+    }
+  }
+
+  // ===== 3D tilt =====
+  document.addEventListener('mousemove', (e) => {
+    const card = document.querySelector('.card:not(.hidden)');
+    if (!card) return;
+    const x = (e.clientX / window.innerWidth - 0.5) * 12;
+    const y = (e.clientY / window.innerHeight - 0.5) * -12;
+    card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+  });
+
+  // ===== Enter key =====
+  document.getElementById('nameInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') startSurprise();
+  });
+</script>
+</body>
+    </html>
